@@ -25,7 +25,7 @@ def n_grams(n):
     def text2ngrams(n):
         ngrams = []
         flag = False
-        ban = set("0123456789 .,!?:;«»%-+=/\n()–'xi’")
+        ban = set("0123456789 .,!?:;«»%-+=/\n()–'xi’[]")
         for i in range(len(text) - n + 1):
             k = 0
             while k != n:

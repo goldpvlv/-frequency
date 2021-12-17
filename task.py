@@ -4,7 +4,7 @@ import string
 text = list()
 alph = list()
 
-with open("text.txt") as file:
+with open("4.txt") as file:
     for items in file:
         text += list(items.lower())
 
@@ -25,7 +25,7 @@ def n_grams(n):
     def text2ngrams(n):
         ngrams = []
         flag = False
-        ban = set("0123456789 .,!?:;«»%-+=/\n()–'xi’[]")
+        ban = set("\n();–'xi’[]")
         for i in range(len(text) - n + 1):
             k = 0
             while k != n:
@@ -65,18 +65,15 @@ def one_gram():
             current_dict[key] += 1
 
 
-
+connection = create_connection("/home/zlata/test1.sglite")
 def write_sql():
-
-    connection = create_connection("/home/zlata/dataBase.sglite")
 
     create_table = """
     CREATE TABLE IF NOT EXISTS task (
       id INTEGER PRIMARY KEY,
       n_gram TEXT NOT NULL,
       number_of_n_gram INTEGER,
-      number_of_all_n_gram INTEGER,
-      procent FLOAT
+      number_of_all_n_gram INTEGER
     );
     """
     params = ()
@@ -85,16 +82,20 @@ def write_sql():
     for key in current_dict:
         create_task = """
         INSERT INTO
-          task (n_gram, number_of_n_gram, number_of_all_n_gram, procent)
+          task (n_gram,  number_of_n_gram, number_of_all_n_gram)
         VALUES
-          (?,?,?,?);
+          (?,?,?);
         """
-        params = (str(key).upper(), current_dict.get(key), length, "%.3f" % ((current_dict.get(key) / length) * 100))
-        execute_query(connection, create_task, params)
+        if n > 2:
+            if current_dict.get(key) > 5:
+                params = (str(key).upper(),   current_dict.get(key), length)
+                execute_query(connection, create_task, params)
+        else:
+            params = (str(key).upper(),  current_dict.get(key), length)
+            execute_query(connection, create_task, params)
 
 
-
-for n in range(1,4):
+for n in range(1,5):
     if n == 1:
         one_gram()
         write_sql()
@@ -103,5 +104,6 @@ for n in range(1,4):
         n_grams(n)
         write_sql()
         current_dict.clear()
+
 
 print("f")
